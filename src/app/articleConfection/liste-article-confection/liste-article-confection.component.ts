@@ -1,6 +1,10 @@
-
+import { Component, OnInit } from '@angular/core';
 import { ArticleConfection } from '../../models/article-confection';
 import { ArticleConfectionService } from '../../services/article-confection.service';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Fournisseur } from 'src/app/models/forunisseur';
+import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 @Component({
   selector: 'app-liste-article-confection',
@@ -19,7 +23,7 @@ export class ListeArticleConfectionComponent implements OnInit {
   // ShowFilter = false;
   // limitSelection = false;
 
-  constructor(private fb: FormBuilder, private articleConfectionService: ArticleConfectionService, private router: Router) { }
+  constructor(private articleConfectionService: ArticleConfectionService, private router: Router) { }
 
   ngOnInit(): void {
     this.getArticleConfections();

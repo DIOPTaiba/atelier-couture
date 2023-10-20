@@ -26,7 +26,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     DetailsArticleVenteComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
