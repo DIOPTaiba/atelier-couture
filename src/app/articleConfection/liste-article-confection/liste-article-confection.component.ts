@@ -1,10 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+
 import { ArticleConfection } from '../../models/article-confection';
 import { ArticleConfectionService } from '../../services/article-confection.service';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Fournisseur } from 'src/app/models/forunisseur';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 @Component({
   selector: 'app-liste-article-confection',
