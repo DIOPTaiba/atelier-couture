@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleConfection } from '../../models/article-confection';
 import { ArticleConfectionService } from '../../services/article-confection.service';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Fournisseur } from 'src/app/models/forunisseur';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import { Router } from '@angular/router';
+import { Fournisseur } from 'src/app/models/forunisseur';
+import { FournisseurService } from 'src/app/services/fournisseur.service';
+import { Categorie } from 'src/app/models/categorie';
+import { Unite } from 'src/app/models/unite';
+
 
 @Component({
   selector: 'app-liste-article-confection',
@@ -13,100 +16,70 @@ import { IDropdownSettings } from 'ng-multiselect-dropdown';
 })
 export class ListeArticleConfectionComponent implements OnInit {
   dropdownList = [];
+  listeFournisseurs = [];
   selectedItems = [];
   dropdownSettings: IDropdownSettings;
 
   articlesConfection: ArticleConfection[] = [];
-  // myForm!: FormGroup;
-  // cities: Array<any> = [];
-  // disabled = false;
-  // ShowFilter = false;
-  // limitSelection = false;
+  fournisseurs: Fournisseur[] = [];
+  categories: Categorie[] = [];
+  unites: Unite[] = [];
 
-  constructor(private articleConfectionService: ArticleConfectionService, private router: Router) { }
+  libelle: string;
+  quantite: number;
+  formSubmitted: boolean = false;
+
+  constructor(private articleConfectionService: ArticleConfectionService,private fournisseurService: FournisseurService, private router:Router) { }
 
   ngOnInit(): void {
-    this.getArticleConfections();
+    // this.getArticleConfections();
+    this.load();
+    // this.getFournisseurs();
 
-    this.dropdownList = [
-      { item_id: 1, item_text: 'Mumbai' },
-      { item_id: 2, item_text: 'Bangaluru' },
-      { item_id: 3, item_text: 'Pune' },
-      { item_id: 4, item_text: 'Navsari' },
-      { item_id: 5, item_text: 'New Delhi' }
-    ];
-    this.selectedItems = [
-      { item_id: 3, item_text: 'Pune' },
-      { item_id: 4, item_text: 'Navsari' }
-    ];
+    
+    // this.dropdownList = [
+    //   { item_id: 1, item_text:  'OP1' },
+    //   { item_id: 2, item_text: 'Bangaluru' },
+    //   { item_id: 3, item_text: 'Pune' },
+    //   { item_id: 4, item_text: 'Navsari' },
+    //   { item_id: 5, item_text: 'New Delhi' }
+    // ];
+    // this.selectedItems = [
+    //   { item_id: 3, item_text: 'Pune' },
+    //   { item_id: 4, item_text: 'Navsari' }
+    // ];
 
     this.dropdownSettings = {
       singleSelection: false,
       idField: 'item_id',
       textField: 'item_text',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 3,
+      selectAllText: 'Cochez tous',
+      unSelectAllText: 'Décochez tous',
+      // itemsShowLimit: 3,
       allowSearchFilter: true
     };
-  //   this.cities = [
-  //     { id: 1, name: 'New Delhi' },
-  //     { id: 2, name: 'Mumbai' ,zone:'',categories:[]},
-  //     { id: 3, name: 'Bangalore' ,zone:'',categories:[]},
-  //     { id: 4, name: 'Pune' ,zone:'',categories:[]},
-  //     { id: 5, name: 'Chennai' ,zone:'',categories:[]},
-  //     { id: 6, name: 'Navsari' ,zone:'',categories:[]}
-  //   ];
-  //   this.selectedItems = [{ item_id: 4, item_text: 'Pune' }, { item_id: 6, item_text: 'Navsari' }];
-  //   this.dropdownSettings = {
-  //     singleSelection: false,
-  //     idField: 'item_id',
-  //     textField: 'item_text',
-  //     selectAllText: 'Select All',
-  //     unSelectAllText: 'UnSelect All',
-  //     itemsShowLimit: 3,
-  //     allowSearchFilter: this.ShowFilter
-  // };
-  //   this.myForm = this.fb.group({
-  //     city: [this.selectedItems]
-  //   });
   }
+  
+  
+  
 
-  onItemSelect(item: any) {
-    console.log(item);
-  }
-  onSelectAll(items: any) {
-    console.log(items);
-  }
-
-  // onItemSelect(item: any) {
-  //           console.log('onItemSelect', item);
-  //       }
-  //       onSelectAll(items: any) {
-  //           console.log('onSelectAll', items);
-  //       }
-  //       toogleShowFilter() {
-  //           this.ShowFilter = !this.ShowFilter;
-  //           this.dropdownSettings = Object.assign({}, this.dropdownSettings, { allowSearchFilter: this.ShowFilter });
-  //       }
-
-  //       handleLimitSelection() {
-  //           if (this.limitSelection) {
-  //               this.dropdownSettings = Object.assign({}, this.dropdownSettings, { limitSelection: 2 });
-  //           } else {
-  //               this.dropdownSettings = Object.assign({}, this.dropdownSettings, { limitSelection: null });
-  //           }
-  //       }
-
-  private getArticleConfections(){
-    this.articleConfectionService.getArticleConfectionListe().subscribe(response => {
-      this.articlesConfection = response.content;
-      // if (response) {
-      //   this.articlesConfection = response._embedded.articleConfectionResponses;
-      // } else {
-      //   console.error('Les données ne sont pas dans le format attendu.', response);
-      // }
+  private load(){
+    this.articleConfectionService.load().subscribe(response => {
+      this.unites = response.unites;
+      this.categories = response.categories;
+      this.fournisseurs = response.fournisseurs;
+      this.articlesConfection = response.articleConfections;
+      response.fournisseurs.forEach(fournisseur => {
+              this.listeFournisseurs.push({ item_id: fournisseur.id, item_text: fournisseur.name });
+            });
+            this.dropdownList = this.listeFournisseurs;
+    
     });
+  }
+
+  onSubmit() {
+    this.formSubmitted = true;
+    // Autres opérations de soumission du formulaire ici
   }
 
   articleConfectionDetails(id: number){
@@ -121,9 +94,44 @@ export class ListeArticleConfectionComponent implements OnInit {
     this.articleConfectionService.deleteArticleConfection(id).subscribe( data => {
       console.log(data);
       console.log(id);
-      this.getArticleConfections();
+      // this.getArticleConfections();
+      this.load();
     })
   }
+
+  onItemSelect(item: any) {
+    this.selectedItems.push(item)
+      console.log(item);
+      console.log(this.selectedItems);
+    }
+    
+    onSelectAll(items: any) {
+      this.selectedItems = items
+      console.log(items);
+      console.log(this.selectedItems);
+    }
+  
+    // private getFournisseurs(){
+    //   this.fournisseurService.getFournisseurListe().subscribe(response => {
+    //     this.fournisseurs = response;
+    //     // console.log(this.fournisseurs);
+    //     this.fournisseurs.forEach(fournisseur => {
+    //       this.listeFournisseurs.push({ item_id: fournisseur.id, item_text: fournisseur.name });
+    //     });
+    //     this.dropdownList = this.listeFournisseurs;
+    //   });
+    // }
+  
+    // private getArticleConfections(){
+    //   this.articleConfectionService.getArticleConfectionListe().subscribe(response => {
+    //     this.articlesConfection = response.content;
+    //      // if (response) {
+    //     //   this.articlesConfection = response._embedded.articleConfectionResponses;
+    //     // } else {
+    //     //   console.error('Les données ne sont pas dans le format attendu.', response);
+    //     // }
+    //   });
+    // }
 
 
 }

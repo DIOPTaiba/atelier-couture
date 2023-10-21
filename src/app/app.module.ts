@@ -1,7 +1,3 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AddArticleConfectionComponent } from './articleConfection/add-article-confection/add-article-confection.component';
 import { UpdateArticleConfectionComponent } from './update-article-confection/update-article-confection.component';
@@ -10,9 +6,15 @@ import { ListeArticleConfectionComponent } from './articleConfection/liste-artic
 import { ListeArticleVenteComponent } from './articleVente/liste-article-vente/liste-article-vente.component';
 import { AddArticleVenteComponent } from './articleVente/add-article-vente/add-article-vente.component';
 import { DetailsArticleVenteComponent } from './articleVente/details-article-vente/details-article-vente.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgModule } from '@angular/core';
+import { FournisseurComponent } from './fournisseur/fournisseur.component';
+
+
 
 @NgModule({
   declarations: [
@@ -23,18 +25,19 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     ListeArticleConfectionComponent,
     ListeArticleVenteComponent,
     AddArticleVenteComponent,
-    DetailsArticleVenteComponent
+    DetailsArticleVenteComponent,
+    FournisseurComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     NgMultiSelectDropDownModule.forRoot()
-    
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

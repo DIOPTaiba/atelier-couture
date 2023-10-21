@@ -12,6 +12,10 @@ export class ArticleConfectionService {
 
   constructor(private httpClient: HttpClient) { }
 
+  load(): Observable<any>{
+    return this.httpClient.get<any>(`${this.baseURL}/load`);
+  }
+
   getArticleConfectionListe(page:number=0,size:number=5): Observable<any>{
     return this.httpClient.get<ArticleConfection[]>(`${this.baseURL}?page=${page}&size=${size}`);
   }

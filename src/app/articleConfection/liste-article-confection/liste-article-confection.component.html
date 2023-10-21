@@ -1,20 +1,19 @@
 <div class="container mt-3">
     <div class="card shadow mb-4" style="width: 80%; margin: auto;">
         <div class="card-body">
-          <form action="/" class="was-validated">
+          <form class="was-validated" (ngSubmit)="onSubmit()">
+            
             <div class="row">
               <div class="col-3 mb-3">
                 <label style="margin-bottom: 0px;" for="libelle" class="form-label">Libellé</label>
-                <input type="text" class="form-control" id="libelle" placeholder="Libellé" name="libelle" required>
-                <div class="valid-feedback">Valide</div>
-                <div class="invalid-feedback">Veuillez renseigner le libellé</div>
+                <input type="text" class="form-control" id="libelle" placeholder="Libellé" required [(ngModel)]="libelle" name="libelle">
+                <!-- <div class="valid-feedback">Valide</div> -->
+                <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner le libellé</div>
               </div>
               <div class="col-3 mb-3">
                 <label style="margin-bottom: 0px;" for="pwd" class="form-label">Unité</label>
                 <select class="form-select" required>
-                  <option value="metre">mètre</option>
-                  <option value="yard">yard</option>
-                  <option value="piece">pièce</option>
+                  <option *ngFor="let unite of unites" [value]="unite.id">{{ unite.libelle }}</option>
                 </select>
                 <!-- <div class="valid-feedback">Valide</div> -->
                 <div class="invalid-feedback">Please fill out this field.</div>
@@ -28,48 +27,39 @@
             <div class="row">
               <div class="col-3 mb-3">
                 <label style="margin-bottom: 0px;" for="quantite" class="form-label">Quantité</label>
-                <input type="number" class="form-control" id="quantite" placeholder="Quantité" name="quantite" required>
+                <input type="number" class="form-control" id="quantite" placeholder="Quantité" name="quantite" required [(ngModel)]="quantite">
                 <div class="valid-feedback">Valide</div>
-                <div class="invalid-feedback">Veuillez renseigner la quantité</div>
+                <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner la quantité</div>
               </div>
               <div class="col-3 mb-3">
                 <label style="margin-bottom: 0px;" for="pwd" class="form-label">Catégorie</label>
                 <select class="form-select" required>
-                  <option value="metre">C1</option>
-                  <option value="yard">C2</option>
-                  <option value="piece">C3</option>
+                  <option *ngFor="let categorie of categories" [value]="categorie.id">{{ categorie.libelle }}</option>
                 </select>
                 <!-- <div class="valid-feedback">Valide</div> -->
                 <div class="invalid-feedback">Please fill out this field.</div>
               </div>
             </div>
-            <div class="col-3 mb-3">
-              <!-- <label>
-                Multi-select
-              </label> -->
-              <select  class="form-select" required>
-                <option value="metre">C1</option>
-                <option value="yard">C2</option>
-                <option value="piece">C3</option>
-              </select>
-              <!-- <select multiple [(ngModel)]="selectedOptions">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select> -->
-              
-              </div>
+            <div class="row">
+              <div class="col-8 mb-3">
+                <!-- <input [(ngModel)]="person.firstName" name="firstName"> -->
+                <label style="margin-bottom: 0px;" for="quantite" class="form-label">Fournisseurs</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Fournisseurs'"
+                  [settings]="dropdownSettings"
+                  [data]="dropdownList"
+                  [(ngModel)]="selectedItems"
+                  (onSelect)="onItemSelect($event)"
+                  (onSelectAll)="onSelectAll($event)"
+                >
+                </ng-multiselect-dropdown>
+                
+                </div>
+            </div>
+            
             <button type="submit" class="btn btn-primary">Save</button>
           </form>
-          <ng-multiselect-dropdown
-            [placeholder]="'custom placeholder'"
-            [settings]="dropdownSettings"
-            [data]="dropdownList"
-            [(ngModel)]="selectedItems"
-            (onSelect)="onItemSelect($event)"
-            (onSelectAll)="onSelectAll($event)"
-          >
-          </ng-multiselect-dropdown>
+          
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
