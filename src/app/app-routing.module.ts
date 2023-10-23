@@ -8,7 +8,6 @@ import { ListeArticleConfectionComponent } from './articleConfection/liste-artic
 const routes: Routes = [
 	{path: "articleconfections", component: ListeArticleConfectionComponent},
 	{path: "", redirectTo: "articleconfections", pathMatch: "full" },
-	{path: "addArticleConfection", component: AddArticleConfectionComponent},
 	{path: "articleventes", component: ListeArticleVenteComponent},
 ];
 

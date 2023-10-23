@@ -20,7 +20,7 @@ export class ArticleConfectionService {
     return this.httpClient.get<ArticleConfection[]>(`${this.baseURL}?page=${page}&size=${size}`);
   }
 
-  storeArticleConfection(articleconfection: ArticleConfection): Observable<Object>{
+  storeArticleConfection(articleconfection: ArticleConfection): Observable<any>{
     return this.httpClient.post(`${this.baseURL}`, articleconfection);
   }
 

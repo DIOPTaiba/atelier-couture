@@ -1,7 +1,53 @@
+.contener_card{
+  /* width: 90%; */
+  margin: auto;
+  padding: 10px;
+  border: #0751b9 solid 1px
+}
+
 .circle-image {
     border-radius: 50%;
-    height: 170px;
-    width: 170px;
-    float: right;
+    height: 200px;
+    width: 200px;
+    /* float: right; */
   }
   
+.row_1{
+  justify-content: space-around;
+  align-items: center;
+}
+
+.div_lib_unite, .div_qte_cat{
+  margin-bottom: 15px;
+}
+
+.div_1{
+  max-width: 70%;
+}
+
+.div_2{
+  max-width: 230px;
+  min-width: 200px;
+  border: teal solid 3px;
+  border-radius: 5px;
+  /* display: table; */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.div_libelle, .div_unite, .div_qte, .div_cat, .div_prix{
+  max-width: 50%;
+}
+
+.btn_save{
+  float: right;
+  margin-right: 5%;
+  margin-bottom: 20px;
+  width: 130px;
+}
+
+/* ::ng-deep pour appliquer des style sur des éléments ajouté dynamiquement */
+::ng-deep .selected-item{
+  margin: 2px!important;
+  max-width: unset!important;
+}

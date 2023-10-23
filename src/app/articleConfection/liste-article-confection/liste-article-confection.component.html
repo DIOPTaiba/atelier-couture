@@ -1,65 +1,81 @@
 <div class="container mt-3">
-    <div class="card shadow mb-4" style="width: 80%; margin: auto;">
+    <div class="card shadow mb-4 contener_card" >
         <div class="card-body">
           <form class="was-validated" (ngSubmit)="onSubmit()">
-            
-            <div class="row">
-              <div class="col-3 mb-3">
-                <label style="margin-bottom: 0px;" for="libelle" class="form-label">Libellé</label>
-                <input type="text" class="form-control" id="libelle" placeholder="Libellé" required [(ngModel)]="libelle" name="libelle">
-                <!-- <div class="valid-feedback">Valide</div> -->
-                <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner le libellé</div>
+            <div class="row row_1">
+              <div class="div_1">
+                <div class="div_lib_unite row">
+                  <div class="div_libelle">
+                    <label style="margin-bottom: 0px;" for="libelle" class="form-label">Libellé</label>
+                    <input [(ngModel)]="libelle" type="text" class="form-control" id="libelle" placeholder="Libellé" required name="libelle">
+                    <!-- <div class="valid-feedback">Valide</div> -->
+                    <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner le libellé</div>
+                  </div>
+                  <div class="div_unite">
+                    <label style="margin-bottom: 0px;" for="unite" class="form-label">Unité</label>
+                    <select [(ngModel)]="unite" class="form-select" name="unite" required>
+                      <option [value]="0" disabled selected>Sélectionnez une option</option>
+                      <option *ngFor="let unite of unitesListe" [value]="unite.id">{{ unite.libelle }}</option>
+                    </select>
+                    <!-- <div class="valid-feedback">Valide</div> -->
+                    <!-- <div class="invalid-feedback">Please fill out this field.</div> -->
+                  </div>
+                </div>
+                <div class="div_qte_cat row">
+                  <div class="div_qte">
+                    <label style="margin-bottom: 0px;" for="quantite" class="form-label">Quantité</label>
+                    <input type="number" [(ngModel)]="quantite" class="form-control" id="quantite" placeholder="Quantité" name="quantite" min="0" required>
+                    <!-- <div class="valid-feedback">Valide</div> -->
+                    <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner la quantité</div>
+                  </div>
+                  <div class="div_cat">
+                    <label style="margin-bottom: 0px;" for="categorie" class="form-label">Catégorie</label>
+                    <select [(ngModel)]="categorie" class="form-select" name="categorie" required>
+                      <option [value]="0" disabled selected>Sélectionnez une option</option>
+                      <option *ngFor="let categorie of categoriesListe" [value]="categorie.id">{{ categorie.libelle }}</option>
+                    </select>
+                    <!-- <div class="valid-feedback">Valide</div> -->
+                    <div *ngIf="formSubmitted && !categorie" class="invalid-feedback">Veuillez choisir une catégorie</div>
+                  </div>
+                </div>
+                <div class="div_qte_cat row">
+                  <div class="div_prix">
+                    <label style="margin-bottom: 0px;" for="prix" class="form-label">Prix</label>
+                    <input type="number" [(ngModel)]="prix" class="form-control" id="prix" placeholder="Prix" name="prix" required min="0">
+                    <!-- <div class="valid-feedback">Valide</div> -->
+                    <div *ngIf="formSubmitted && !prix" class="invalid-feedback">Veuillez renseigner le prix</div>
+                  </div>
+                </div>
               </div>
-              <div class="col-3 mb-3">
-                <label style="margin-bottom: 0px;" for="pwd" class="form-label">Unité</label>
-                <select class="form-select" required>
-                  <option *ngFor="let unite of unites" [value]="unite.id">{{ unite.libelle }}</option>
-                </select>
-                <!-- <div class="valid-feedback">Valide</div> -->
-                <div class="invalid-feedback">Please fill out this field.</div>
-              </div>
-              <div class="col-6 mb-3">
+              <div class="div_2">
                 <img src="assets/images/article_confection.png" class="circle-image" alt="article Confection" />
-                <div class="valid-feedback">Valide</div>
-                <div class="invalid-feedback">Please fill out this field.</div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-3 mb-3">
-                <label style="margin-bottom: 0px;" for="quantite" class="form-label">Quantité</label>
-                <input type="number" class="form-control" id="quantite" placeholder="Quantité" name="quantite" required [(ngModel)]="quantite">
-                <div class="valid-feedback">Valide</div>
-                <div *ngIf="formSubmitted && !libelle" class="invalid-feedback">Veuillez renseigner la quantité</div>
-              </div>
-              <div class="col-3 mb-3">
-                <label style="margin-bottom: 0px;" for="pwd" class="form-label">Catégorie</label>
-                <select class="form-select" required>
-                  <option *ngFor="let categorie of categories" [value]="categorie.id">{{ categorie.libelle }}</option>
-                </select>
-                <!-- <div class="valid-feedback">Valide</div> -->
-                <div class="invalid-feedback">Please fill out this field.</div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-8 mb-3">
+            <div class="">
+              <div class="col-5 mb-3">
                 <!-- <input [(ngModel)]="person.firstName" name="firstName"> -->
                 <label style="margin-bottom: 0px;" for="quantite" class="form-label">Fournisseurs</label>
                 <ng-multiselect-dropdown
                   [placeholder]="'Fournisseurs'"
                   [settings]="dropdownSettings"
                   [data]="dropdownList"
-                  [(ngModel)]="selectedItems"
+                  [(ngModel)]="fournisseursSelected"
                   (onSelect)="onItemSelect($event)"
                   (onSelectAll)="onSelectAll($event)"
-                >
+                  (onDeSelect)="onItemDeSelect($event)"
+                  (onDeSelectAll)="onDeSelectAll($event)"
+                  >
                 </ng-multiselect-dropdown>
-                
+
                 </div>
             </div>
-            
-            <button type="submit" class="btn btn-primary">Save</button>
+            <!-- <button type="submit" class="btn btn-outline-success btn_save">Valider</button> -->
+            <!-- <button type="submit" class="btn btn-outline-success btn_save" [disabled]="isEditing">Valider</button>
+            <button type="submit" class="btn btn-outline-success btn_save" [disabled]="!isEditing">Mettre à jour</button> -->
+            <button type="submit" *ngIf="!isEditing" class="btn btn-outline-success btn_save" >Valider</button>
+            <button type="submit" *ngIf="isEditing" class="btn btn-outline-success btn_save">Mettre à jour</button>
+
           </form>
-          
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
@@ -67,7 +83,7 @@
                         <th>Libellé</th>
                         <th>QteStock</th>
                         <th>Catégorie</th>
-                        <th>Actions</th>
+                        <th style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
                             <!-- articleconfections est une variable dans  liste-articles-confection.component.ts-->
@@ -77,45 +93,13 @@
                         <td>{{articleconfection.libelle}}</td>
                         <td>{{articleconfection.qteStock}}</td>
                         <td>{{articleconfection.categorie.libelle}}</td>
-                        <td>
-                            <button (click) = "updateArticleConfection(articleconfection.id)" class = "btn btn-primary"> Edit</button>
-                            <button (click) = "deleteArticleConfection(articleconfection.id)" class = "btn btn-danger" style="margin-left: 10px"> Delete</button>
-                
+                        <td style="text-align: center;">
+                            <button (click) = "editArticleConfection(articleconfection.id)" type="button" class="btn btn-outline-info" style="margin-right: 10px;"> Editer</button>
+                            <button (click) = "deleteArticleConfection(articleconfection.id)" type="button" class="btn btn-outline-danger"> Supprimer</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-
-            <!-- <div class="container mt-3">
-                <h2>Small Table</h2>
-                <p>The .table-sm class makes the table smaller by cutting cell padding in half:</p>
-                <table class="table table-bordered table-sm">
-                  <thead>
-                    <tr>
-                      <th>Firstname</th>
-                      <th>Lastname</th>
-                      <th>Email</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>John</td>
-                      <td>Doe</td>
-                      <td>john@example.com</td>
-                    </tr>
-                    <tr>
-                      <td>Mary</td>
-                      <td>Moe</td>
-                      <td>mary@example.com</td>
-                    </tr>
-                    <tr>
-                      <td>July</td>
-                      <td>Dooley</td>
-                      <td>july@example.com</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div> -->
         </div>
     </div>
 </div>
