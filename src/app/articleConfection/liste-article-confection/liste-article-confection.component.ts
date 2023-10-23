@@ -174,6 +174,9 @@ export class ListeArticleConfectionComponent implements OnInit {
         this.prix = articleAEdit.prix;
         this.unite = articleAEdit.unite.id;
         this.categorie = articleAEdit.categorie.id;
+        for (let i = 0; i < articleAEdit.fournisseurs.length; i++) {
+          this.fournisseursSelected.push(articleAEdit.fournisseurs[i].id)
+        }
         // this.fournisseursSelected = articleAEdit.fournisseurs;
         console.log(articleAEdit);
         console.log(this.fournisseursSelected);
