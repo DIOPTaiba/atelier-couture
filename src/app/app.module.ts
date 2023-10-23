@@ -34,7 +34,9 @@ import { FournisseurComponent } from './fournisseur/fournisseur.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgMultiSelectDropDownModule.forRoot(),
+    
+    
   ],
   providers: [],
   bootstrap: [AppComponent]
