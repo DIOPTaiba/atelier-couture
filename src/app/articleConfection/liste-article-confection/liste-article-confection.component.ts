@@ -1,38 +1,102 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { ArticleConfection } from '../../models/article-confection';
 import { ArticleConfectionService } from '../../services/article-confection.service';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { Router } from '@angular/router';
 import { Fournisseur } from 'src/app/models/forunisseur';
-import { FournisseurService } from 'src/app/services/fournisseur.service';
 import { Categorie } from 'src/app/models/categorie';
 import { Unite } from 'src/app/models/unite';
+
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {FormControl} from '@angular/forms';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
+import {Observable, map, startWith} from 'rxjs';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
+
+// Pour utiliser jQuery
+declare var $: any;
 
 @Component({
   selector: 'app-liste-article-confection',
   templateUrl: './liste-article-confection.component.html',
   styleUrls: ['./liste-article-confection.component.css'],
+
+  // standalone: true,
+  // imports: [
+  //   FormsModule,
+  //   // MatFormFieldModule,
+  //   // MatChipsModule,
+  //   NgFor,
+  //   // MatIconModule,
+  //   // MatAutocompleteModule,
+  //   ReactiveFormsModule,
+  //   AsyncPipe,
+  // ],
 })
 
 export class ListeArticleConfectionComponent implements OnInit {
 
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  fruitCtrl = new FormControl('');
+  filteredFruits: Observable<string[]>;
+  fruits: string[] = ['Lemon'];
+  allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+
+  @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+
+  announcer = inject(LiveAnnouncer);
+
+  constructor(private articleConfectionService: ArticleConfectionService, private router:Router) {
+      this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+        startWith(null),
+        map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
+      );
+     }                                                                    
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Add our fruit
+    if (value) {
+      this.fruits.push(value);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+
+    this.fruitCtrl.setValue(null);
+  }
+
+  remove(fruit: string): void {
+    const index = this.fruits.indexOf(fruit);
+
+    if (index >= 0) {
+      this.fruits.splice(index, 1);
+
+      this.announcer.announce(`Removed ${fruit}`);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.fruits.push(event.option.viewValue);
+    this.fruitInput.nativeElement.value = '';
+    this.fruitCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allFruits.filter(fruit => fruit.toLowerCase().includes(filterValue));
+  }
+
+
   articleConfectionListe: ArticleConfection[] = [];
   // articlesConfection: ArticleConfection[];
-  // elementData = [
-  //   {
-  //     libelle: "AC33",
-  //     prix: 5000.0,
-  //     qteStock: 4,
-  //     reference: "REF_CAC_9",
-  //     categorie: {
-  //       libelle: "CAC3"
-  //     },
-  //   },];
-
-
+  
   
 
-  displayedColumns: string[] = ['reference', 'libelle', 'qteStock', 'categorie','actions'];
+  // displayedColumns: string[] = ['reference', 'libelle', 'qteStock', 'categorie','actions'];
   // dataSource = new MatTableDataSource<any>(this.articleConfectionListe);
   // dataSource = new MatTableDataSource<ArticleConfection>();
 
@@ -54,14 +118,15 @@ export class ListeArticleConfectionComponent implements OnInit {
   libelle!: string;
   quantite!: number;
   prix!: number;
+  reference!: string;
   unite: number = 0;
   categorie: number = 0;
+  tableauFournisseurs=[];
 
   uniteObjet: Unite = new Unite;
   categorieObjet: Categorie = new Categorie;
 
   
-
   newArticleConfection: ArticleConfection = new ArticleConfection;
   editeArticleConfection: ArticleConfection = new ArticleConfection;
 
@@ -70,28 +135,12 @@ export class ListeArticleConfectionComponent implements OnInit {
   isEditing = false;
   idArticleAEditer:number = 0;
 
-
-  constructor(private articleConfectionService: ArticleConfectionService,private fournisseurService: FournisseurService, private router:Router) { }
-
   ngOnInit(): void {
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
 
     // this.getArticleConfections();
-    this.load();
-    
-    // this.dropdownList = [
-    //   { item_id: 1, item_text: 'OP1' },
-    //   { item_id: 2, item_text: 'Bangaluru' },
-    //   { item_id: 3, item_text: 'Pune' },
-    //   { item_id: 4, item_text: 'Navsari' },
-    //   { item_id: 5, item_text: 'New Delhi' }
-    // ];
-    // this.selectedItems = [
-    //   { item_id: 1, item_text: 'OP1' },
-    //   { item_id: 2, item_text: 'Bangaluru' },
-    // ];
-    
+    this.load();    
 
     this.dropdownSettings = {
       searchPlaceholderText: 'Rechercher',
@@ -107,7 +156,14 @@ export class ListeArticleConfectionComponent implements OnInit {
     };
   }
 
-  
+  ngAfterViewInit() {
+    $(document).ready(function() {
+      const table = $('#myTable').DataTable();
+      this.data.forEach(item => {
+        table.row.add(item).draw(false);
+      });
+    });
+  }
 
   private load(){
     this.articleConfectionService.load().subscribe(response => {
@@ -122,7 +178,7 @@ export class ListeArticleConfectionComponent implements OnInit {
             });
       this.dropdownList = this.listeFournisseursIdName;
       // this.fournisseursSelected = [
-      //   {item_id: 1, item_text: 'Modou Diop'},
+      //   {item_id: 1, item_text: 'Modou xxx'},
       //   {item_id: 2, item_text: 'Issa Diop'}
       // ];
     
@@ -143,7 +199,10 @@ export class ListeArticleConfectionComponent implements OnInit {
       this.newArticleConfection.prix = this.prix;
       this.newArticleConfection.unite = this.uniteObjet;
       this.newArticleConfection.categorie = this.categorieObjet;
-      this.newArticleConfection.fournisseurs = this.fournisseursSelected;
+      this.tableauFournisseurs = this.fournisseursSelected.map(item => item.item_id);
+      this.newArticleConfection.fournisseurs = this.tableauFournisseurs;
+      console.log(this.fournisseursSelected);
+      console.log(this.tableauFournisseurs);
 
       this.articleConfectionService.storeArticleConfection(this.newArticleConfection).subscribe((response) => {
         // mise à jour la liste des articles dans le tableau
@@ -155,6 +214,7 @@ export class ListeArticleConfectionComponent implements OnInit {
 
       this.editeArticleConfection.libelle = this.libelle;
       this.editeArticleConfection.qteStock = this.quantite;
+      this.editeArticleConfection.reference = this.reference;
       this.editeArticleConfection.prix = this.prix;
       this.editeArticleConfection.unite = this.uniteObjet;
       this.editeArticleConfection.categorie = this.categorieObjet;
@@ -170,6 +230,7 @@ export class ListeArticleConfectionComponent implements OnInit {
 
     // Réinitialisation du formulaire
     this.libelle = '';
+    this.reference = '';
     this.quantite = null;
     this.prix = null;
     this.unite = 0; // Remettre à l'option par défaut
@@ -188,9 +249,9 @@ export class ListeArticleConfectionComponent implements OnInit {
   }
 
 
-  articleConfectionDetails(id: number){
-    this.router.navigate(['article-confection-details', id]);
-  }
+  // articleConfectionDetails(id: number){
+  //   this.router.navigate(['article-confection-details', id]);
+  // }
 
   editArticleConfection(articleId: number) {
     // Récupère l'article dans la liste en fonction de son id
@@ -201,16 +262,21 @@ export class ListeArticleConfectionComponent implements OnInit {
         this.idArticleAEditer = articleId;
         this.libelle = articleAEdit.libelle;
         this.quantite = articleAEdit.qteStock;
+        this.reference = articleAEdit.reference;
         this.prix = articleAEdit.prix;
         this.unite = articleAEdit.unite.id;
         this.categorie = articleAEdit.categorie.id;
-        // this.fournisseursSelected = [
-        //     { item_id: 3, item_text: 'Pune' },
-        //     { item_id: 4, item_text: 'Navsari' }
-        //   ];
-        for (let i = 0; i < articleAEdit.fournisseurs.length; i++) {
-          this.fournisseursSelected.push(articleAEdit.fournisseurs[i].id)
-        }
+        this.listeFournisseursIdName = [];
+        articleAEdit.fournisseurs.forEach((fournisseur: { id: any; name: any; }) => {
+          return this.listeFournisseursIdName.push({ item_id: fournisseur.id, item_text: fournisseur.name });
+        });
+        // On vide le tableau des fourisseurs sélectionnés et on charge les fournisseurs de l'article à éditer
+        this.fournisseursSelected = [] ;
+        this.fournisseursSelected = this.listeFournisseursIdName;
+          
+        // for (let i = 0; i < articleAEdit.fournisseurs.length; i++) {
+        //   this.fournisseursSelected.push(articleAEdit.fournisseurs[i].id)
+        // }
         // this.fournisseursSelected = articleAEdit.fournisseurs;
         console.log(articleAEdit);
         console.log(this.fournisseursSelected);

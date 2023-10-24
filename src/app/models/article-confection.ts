@@ -8,7 +8,7 @@ export class ArticleConfection {
     prix!: number;
     qteStock!: number;
     reference!: string;
-    categorie: Categorie = new Categorie;
+    categorie!: Categorie;
     unite: Unite = new Unite;
     fournisseurs: Fournisseur[] = [];
 

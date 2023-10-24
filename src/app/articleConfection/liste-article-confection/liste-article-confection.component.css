@@ -51,3 +51,12 @@
   margin: 2px!important;
   max-width: unset!important;
 }
+
+.example-chip-list {
+  width: 100%;
+}
+
+.row_four_ref{
+  justify-content: space-between;
+  align-items: center;
+}
